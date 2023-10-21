@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hangman</title>
+    <link rel="stylesheet" href="riddle.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+
+    <h1 class="title">GUESS THE WORD</h1>
+    <canvas id="hangman" width="150" height="150"style="display: none;"></canvas>
+   <h3 style="display: none;"class="totTym" >TOTAL TIME TAKEN : <span class="totalTime"></span></h3>
+
+    <div id="carouselExampleCaptions" class="carousel slide">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="wrapper description p-1">
+                <div class="content">
+                    <h3 class="my-2">Description : </h3>
+                    <ul>
+                        <li>Its a Guess a word (Hangman) game</li>
+                        <li>Based on the given hint you need to guess the word</li>
+                        <li>You get 1 point on each correct guess</li>
+                        <li>There are 3 levels <ul>
+                            <li>In 1st level you need to guess 3 letter word, similarly 4 letters word in 2nd Level and 5 letters word in final level</li>
+                            <li>In 1st level you will be having 2 life, in 2nd and final level you will be having 3 life</li>
+                            <li>You will go to next level only if you pass the present level</li>
+                        </ul></li>
+                        <li>There is no negative point for wrong guess</li>
+                        <li>You will have 20sec to guess each word
+                            <ul><li>If you dont guess within given time it will automatically go to next question</li></ul>
+                        </li>
+                        <li>You can restart the game at any point of time</li>
+                    </ul>
+                    <div class="d-flex justify-content-center my-2"><h3>All the best !!!</h3></div>
+                </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="wrapper userDetails"style="display: grid;">
+                <div class="content">
+                    <div class="d-flex justify-content-center my-3">
+                        <label class="name"for="">Your name : </label>
+                        <input class="userName mx-2" type="text" name=""required>
+                    </div>
+                    <div class="d-flex justify-content-center mt-2">
+                        <button class="start-btn" onclick="start()">Start Game</button>
+        
+                    </div>
+                </div>
+            </div>
+          </div>
+          
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+        <h1 class="stage" style="display: none;">Level <span class="levelNo"></span><span class="levelStatus"></span></h1>
+    <div class="card wrapper" style="display: none;">
+      <div class="content">
+        <div class="col-12 d-flex justify-content-around">
+            <h5 class="time px-1">Timer:<span class="timer"></span></h1><br>
+                <h5 class="score">Points:<span class="points"></span></h5>
+                <h5 class="minTime">Best timings:<span class="minTimeValue"></span></h5>
+          </div>
+        <input type="text" class="inputbar" maxlength="1" />
+        <div class="input"></div>
+        <div class="details">
+          <div class="hint m-1 mt-3">Hint: <span></span></div>
+          <div class="wrong m-1 mt-3">Wrong guess letters: <span></span></div>
+        </div>
+      </div>
+      <div class="col-12 d-flex justify-content-center my-3">
+        <button onclick="resetGame()" class="reset-btn">RESET</button>
+      </div>
+    </div>
+    <div>
+      <p class="message"></p>
+    </div>
+
+    <div class="congrats">
+      <img src="congratulation.png" alt="" srcset="" />
+    </div>
+    <div class="fail"><img src="sad.png" alt="" /></div>
+    <div class="wrapper scoreboard mt-2" style="display: none;">
+        <div class="content">
+            <h3 class="soreBoard">Score Board</h1>
+            <p class="board"></p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center mt-3">
+        <button class="playAgain" onclick="playAgain()" style="display: none;">Play again</button>
+
+    </div>
+    
+  </body>
+  <script src="list.js"></script>
+  <script src="riddle.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"
+  ></script>
+  <script src="hangman.js"></script>
+</html>
