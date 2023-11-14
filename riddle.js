@@ -11,7 +11,6 @@ const message = document.querySelector(".message");
 const points = document.querySelector(".points");
 const levelNo = document.querySelector(".levelNo");
 const stage = document.querySelector(".stage");
-const startBtn = document.querySelector(".start-btn");
 const description = document.querySelector(".description");
 const userDetails = document.querySelector(".userDetails");
 const userName = document.querySelector(".userName");
@@ -23,15 +22,13 @@ const canvas = document.getElementById("hangman");
 const context = canvas.getContext("2d");
 const scoreboard = document.querySelector(".scoreboard");
 const board = document.querySelector(".board");
+const gameOver = document.querySelector(".gameOver")
 var best_time;
 var totTime = 0;
 var sortedBestTime = {};
 var drawHangmanImg = 0;
 var names = [];
 var timeTaken = [];
-var riddle3 = 0;
-var riddle4 = 0;
-var riddle5 = 0;
 var point = 0;
 var tcount = 0;
 var no_of_chance = 0;
@@ -41,6 +38,7 @@ var wrongLetters = [];
 var randRiddel;
 var interval;
 var key;
+var chance = 0
 var correctLetters = [];
 var bestTime = {};
 specialChar = [
@@ -64,14 +62,6 @@ specialChar = [
   "'",
   '"',
 ];
-if (localStorage.getItem("bestTime")) {
-  bestTime = JSON.parse(localStorage.getItem("bestTime"));
-}
-
-if (localStorage.getItem("minTime")) {
-  best_time = parseFloat(localStorage.getItem("minTime"));
-  minTimeValue.innerHTML = best_time;
-}
 
 function start() {
   if (userName.value != "") {
@@ -79,78 +69,107 @@ function start() {
     totTime = 0;
     drawHangmanImg = 0;
     names.push(userName.value);
+    userName.value = ""
     canvas.style.display = "block";
-    levelCheck(1, point, tcount);
+    levelCheck(1, point);
     interval2 = setInterval(totalTimeTaken, 1000);
     userDetails.style.display = "none";
     card.style.display = "block";
     inputbar.addEventListener("input", inputLetter);
     input.addEventListener("click", () => inputbar.focus());
     document.addEventListener("keydown", () => inputbar.focus());
-    setTimeout(createRiddleFor3Letters(), 3000);
+    setTimeout(generateRiddle(1), 3000);
   } else {
     userName.style.border = "2px solid red";
   }
 }
+
 function levelCheck(levelNum, point) {
+  chance++
   stage.style.display = "block";
   totTym.style.display = "block";
   if (levelNum == 1) {
     levelNo.innerHTML = " 1 ";
-    if (point == 3) {
-      levelNum++;
-      setTimeout(() => {
-        levelNo.innerHTML = " 2 ";
-      }, 2000);
-      createRiddleFor4Letters();
-    } else if (point < 3) {
-      createRiddleFor3Letters();
+    if (chance <=3 && point<=3){
+      generateRiddle(1)
+    }
+    else if (chance >3 && point>=3){
+     levelNum++
+     setTimeout(() =>{
+      levelNo.innerHTML = " 2 "
+     },1000)
+     console.log("level:"+levelNum+"chance:"+chance+"points:"+point)
+     console.log("lev 2 called 1st time")
+     generateRiddle(2)
+    }
+    else if(chance >3 && point <=3)
+    {
+      lostGame()
     }
   } else if (levelNum == 2) {
-    if (point == 6) {
-      levelNum++;
-      setTimeout(() => {
-        levelNo.innerHTML = " 3 ";
-      }, 2000);
-      createRiddleFor5Letters();
-    } else {
-      createRiddleFor4Letters();
+    if (chance <=6 && point <=6)
+    {
+      console.log("level:"+levelNum+"chance:"+chance+"points:"+point)
+      console.log("lev 2 called again")
+      generateRiddle(2)
     }
+    else if(chance >6 && point >=6){
+      levelNum++
+      setTimeout(() =>{
+        levelNo.innerHTML = " 3 "
+       },1000)
+       generateRiddle(3)
+    }
+    else if(chance >6 && point<=6)
+    {
+      lostGame()
+    }
+   
   } else if (levelNum == 3) {
-    if (point == 9) {
-      levelNo.innerHTML = " 3 Completed";
+
+    if (chance <=9 && point <=9){
+      generateRiddle(3)
+    }
+    else if(chance >9 && point<9){
+      lostGame()
+    }
+    else if (chance >=9 && point >=9){
+
+         levelNo.innerHTML = " 3 Completed";
       clearInterval(interval2);
       congrats.style.display = "none";
       play_again.style.display = "block";
       timeTaken.push(totTime);
       bestTiming();
       scoreboard.style.display = "block";
-    } else {
-      createRiddleFor5Letters();
     }
   }
 }
-
+function findLevelCheck() {
+  if (chance <=3 && point <=3) {
+    levelCheck(1, point);
+  } else if ((chance > 3 && point == 3) || (chance > 3 && point <= 6) && (chance <= 6)){
+    levelCheck(2, point);
+  } else if ((chance > 6 && point == 6) || (chance > 6 && point > 6)) { 
+    levelCheck(3, point);
+  }
+}
 const usedRiddles = new Set();
-function createRiddleFor3Letters() {
-  clearInterval(interval);
-  riddle3++;
-  randRiddel = getRandomRiddle(list_of_3_letters);
-  createRiddle();
-}
-
-function createRiddleFor4Letters() {
-  clearInterval(interval);
-  riddle4++;
-  randRiddel = getRandomRiddle(list_of_4_letters);
-  createRiddle();
-}
-
-function createRiddleFor5Letters() {
-  clearInterval(interval);
-  riddle5++;
-  randRiddel = getRandomRiddle(list_of_5_letters);
-  createRiddle();
+function generateRiddle(num){
+  clearInterval(interval)
+  if (num ==1){
+    randRiddel = getRandomRiddle(list_of_3_letters);
+    createRiddle()
+  }
+  else if(num ==2){
+    randRiddel = getRandomRiddle(list_of_4_letters);
+    createRiddle()
+  }
+  else if (num==3){
+    randRiddel = getRandomRiddle(list_of_5_letters);
+    createRiddle()
+  }
+  
 }
 function getRandomRiddle(arr) {
   let randomIndex;
@@ -182,30 +201,44 @@ function createRiddle() {
     input.innerHTML = box;
   }
 }
+function lostGame(){
+  totTime = 0;
+  point = 0;
+  points.innerHTML = "";
+  handleDisplay(4)
+  clearInterval(interval2)
+}
 function handleDisplay(val) {
   if (val == 1) {
-    description.style.display = "none";
-    message.style.display = "none";
-    congrats.style.display = "none";
-    lost.style.display = "none";
+    [description, message, congrats, lost].forEach(
+      (element) => (element.style.display = "none")
+    );
     card.style.display = "block";
     card.classList.remove("shake");
     timeColor.classList.remove("color");
   } else if (val == 2) {
-    userName.style.border = "none";
-    stage.style.display = "none";
-    totTym.style.display = "none";
-    description.style.display = "block";
-    userDetails.style.display = "block";
-    card.style.display = "none";
-  } else if (val == 3) {
-    userName.style.border = "none";
-    scoreboard.style.display = "none";
-    play_again.style.display = "none";
-    totTym.style.display = "none";
-    description.style.display = "block";
+    [userName, stage, totTym, card,canvas,gameOver].forEach(
+      (element) => (element.style.display = "none")
+    );
+    [description, userName].forEach(
+      (element) => (element.style.display = "block")
+    );
+    userDetails.style.display = "grid"
+  } else if (val == 3) { // play again
+    [userName, scoreboard, play_again, totTym, stage,canvas,gameOver,congrats].forEach(
+      (element) => (element.style.display = "none")
+    );
+    [description,userName].forEach((element)=> (element.style.display="block"));
     userDetails.style.display = "grid";
-    stage.style.display = "none";
+  }
+  else if(val == 4){
+    setTimeout(() => {
+      [gameOver, play_again].forEach((element) => (element.style.display = "block"));
+  }, 1000);
+  
+  [card, lost, canvas].forEach((element) => (element.style.display = "none"));
+  
+    
   }
 }
 function inputLetter(e) {
@@ -250,7 +283,7 @@ function wrongGuess() {
       clearInterval(interval);
       display(2);
     }, 1000);
-    clearInterval(interval);
+    // clearInterval(interval);
   }
 }
 function invalidInput(key) {
@@ -276,6 +309,7 @@ function congrulation() {
 function resetGame() {
   point = 0;
   totTime = 0;
+  chance = 0;
   points.innerHTML = "";
   handleDisplay(2);
   clearInterval(interval2);
@@ -284,12 +318,12 @@ function display(num) {
   if (num == 1) {
     congrats.style.display = "block";
     card.style.display = "none";
-    setTimeout(findLevelCheck, 3000);
+    setTimeout(findLevelCheck, 1000);
   } else if (num == 2) {
     lost.style.display = "block";
     card.style.display = "none";
     message.style.display = "none";
-    setTimeout(findLevelCheck, 3000);
+    setTimeout(findLevelCheck, 1000);
   }
 }
 function timer() {
@@ -309,15 +343,7 @@ function totalTimeTaken() {
   totTime++;
   totalTime.innerHTML = totTime;
 }
-function findLevelCheck() {
-  if (point <= 3) {
-    levelCheck(1, point);
-  } else if (point >= 4 && point < 7) {
-    levelCheck(2, point);
-  } else if (point >= 7) {
-    levelCheck(3, point);
-  }
-}
+
 function bestTiming() {
   bestTime[names.slice(-1)[0]] = timeTaken.slice(-1)[0];
   const keyValueArray = Object.entries(bestTime).map(([key, value]) => ({
@@ -353,5 +379,15 @@ function minTime() {
 function playAgain() {
   totTime = 0;
   point = 0;
+  chance = 0
+  points.innerHTML = "";
   handleDisplay(3);
+}
+if (localStorage.getItem("bestTime")) {
+  bestTime = JSON.parse(localStorage.getItem("bestTime"));
+}
+
+if (localStorage.getItem("minTime")) {
+  best_time = parseFloat(localStorage.getItem("minTime"));
+  minTimeValue.innerHTML = best_time;
 }
